@@ -1,0 +1,117 @@
+require "main.words"
+function clearall()
+	u = {}
+	w = {}
+	math.randomseed(os.clock()*100000)
+	wordindex = math.random(1,#table1) 
+	WORD = table1[wordindex][1]
+	TRANSLATE = table1[wordindex][2]
+	attempt = 1
+	label.set_text("#state", "")
+	change_anim(1)
+	filltables(WORD)
+	label.set_text("#label", table.concat(u,""))
+	label.set_text("#translate", " ")
+end	
+
+function filltables(word)
+	for i=1,#word do
+		table.insert(u,"-")
+	end
+	for letter in string.gmatch(word,"%a") do
+		table.insert(w,letter)
+	end
+end
+function printword (word, input)
+	for i,v in ipairs(w) do
+		if v == input then
+			u[i]=v
+		end
+	end
+	label.set_text("#label", table.concat(u,""))
+end
+function iswpresent(word, input)
+	for i, v in ipairs(w) do
+		if v == input then
+			return true
+		end
+	end
+	return false
+end
+function isequal(table1, table2)
+	local a = table.concat(table1,"")
+	local b = table.concat(table2,"")
+	if a == b then
+		return true
+	else
+		return false
+	end
+end
+
+function init(self)
+	
+	msg.post(".", "acquire_input_focus")
+	msg.post("@render:", "use_fixed_fit_projection", { near = -1, far = 1 })
+	clearall()
+	
+	printword(WORD, self.a)	
+end
+
+function on_input(self, action_id, action)
+	if action_id == hash("type") then
+		self.a = action.text
+		print(self.a)
+		print(attempt)
+		if iswpresent(WORD, self.a) == true then
+			printword(WORD, self.a)
+		else
+			attempt=attempt+1
+			change_anim(attempt)
+		end
+		if attempt == 11 then
+			local red = vmath.vector4(1, 0, 0, 1)
+			go.set("#state","color",red)
+			label.set_text("#state", "you loose")
+			label.set_text("#label", WORD)
+			label.set_text("#translate", TRANSLATE)
+			msg.post(".", "release_input_focus")
+			timer.delay(3, false, function() clearall() end)
+			msg.post(".", "acquire_input_focus")
+		end
+		if isequal(u,w) == true then
+			local green = vmath.vector4(0, 1, 0, 1)
+			go.set("#state","color",green)
+			label.set_text("#state", "you win")
+			print("youwin")
+			msg.post(".", "release_input_focus")
+			timer.delay(3, false, function() clearall() end)
+			msg.post(".", "acquire_input_focus")
+		end
+	end
+end
+
+function change_anim(state)
+	if state == 1 then
+		msg.post("#sprite", "play_animation", { id = hash("1")})
+	elseif state == 2 then
+		msg.post("#sprite", "play_animation", { id = hash("2")})
+	elseif state == 3 then
+		msg.post("#sprite", "play_animation", { id = hash("3")})
+	elseif state == 4 then
+		msg.post("#sprite", "play_animation", { id = hash("4")})
+	elseif state == 5 then
+		msg.post("#sprite", "play_animation", { id = hash("5")})
+	elseif state == 6 then
+		msg.post("#sprite", "play_animation", { id = hash("6")})
+	elseif state == 7 then
+		msg.post("#sprite", "play_animation", { id = hash("7")})
+	elseif state == 8 then
+		msg.post("#sprite", "play_animation", { id = hash("8")})
+	elseif state == 9 then
+		msg.post("#sprite", "play_animation", { id = hash("9")})
+	elseif state == 10 then
+		msg.post("#sprite", "play_animation", { id = hash("10")})
+	elseif state == 11 then
+		msg.post("#sprite", "play_animation", { id = hash("11")})
+	end	
+end

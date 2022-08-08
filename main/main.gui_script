@@ -1,0 +1,5 @@
+function on_input(self, action_id, action)
+	if(action_id == hash("touch")) then
+		gui.show_keyboard(gui.KEYBOARD_TYPE_DEFAULT, true)
+	end
+end
